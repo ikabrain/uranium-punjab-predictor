@@ -1837,6 +1837,11 @@ dependencies = [
     { name = "streamlit" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "uranium-punjab-predictor" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "geopandas", specifier = ">=1.1.1" },
@@ -1852,6 +1857,9 @@ requires-dist = [
     { name = "shapely", specifier = ">=2.1.2" },
     { name = "streamlit", specifier = ">=1.51.0" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "uranium-punjab-predictor", virtual = "." }]
 
 [[package]]
 name = "urllib3"

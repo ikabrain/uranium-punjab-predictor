@@ -18,3 +18,11 @@ dependencies = [
     "shapely>=2.1.2",
     "streamlit>=1.51.0",
 ]
+
+[dependency-groups]
+dev = [
+    "uranium-punjab-predictor",
+]
+
+[tool.uv.sources]
+uranium-punjab-predictor = { workspace = true }
