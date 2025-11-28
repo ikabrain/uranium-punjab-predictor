@@ -5,7 +5,7 @@ from uranium_punjab_predictor.utils.model import load_model, prepare_features
 
 MODEL_PATH = Path(__file__).parent / "models" / "model.joblib"
 
-  # Major districts for dropdown
+# Major districts for dropdown
 DISTRICTS = [
     "Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka",
     "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana",
@@ -18,7 +18,7 @@ def main():
     st.title("Punjab Groundwater Uranium Predictor")
     st.markdown(
         """
-        Enter your Punjab location details to get a prediction of uranium concentration in groundwater.
+        Enter your Punjab district, latitude, and longitude to get a prediction of uranium concentration in groundwater.
         
         *(Based on the data from the 2023 Punjab Groundwater Survey)*
         """
@@ -28,7 +28,6 @@ def main():
         district = st.selectbox("District", DISTRICTS)
         lat = st.number_input("Latitude", format="%.6f", min_value=27.0, max_value=34.0)
         lon = st.number_input("Longitude", format="%.6f", min_value=73.0, max_value=77.0)
-        well_depth = st.number_input("Well Depth (meters) [Optional]", min_value=0.0, format="%.2f")
         predict_btn = st.form_submit_button("Predict")
 
     result_html = None
@@ -55,14 +54,18 @@ def main():
 
         if not err_msg:
             try:
-                features = prepare_features(district, lat_f, lon_f, well_depth)
+                  # Only use latitude and longitude for features
+                features = pd.DataFrame({
+                    "latitude": [lat_f],
+                    "longitude": [lon_f]
+                })
             except Exception as e:
                 err_msg = f"Error preparing input features: {str(e)}"
 
         if not err_msg:
             try:
-                pred = model.predict(features)[0]
-                result_html = f"<div style='padding:1.5em 1em;background:#F3F6FA;border-radius:8px;font-size:1.25em;font-weight:600;color:#173042;text-align:center;'>\nPredicted Uranium Concentration:<br><span style='font-size:2em;color:#4F8A10'>{pred:.2f} \u03bcg/L</span></div>"
+                pred        = model.predict(features)[0]
+                result_html = f"<div style='padding:1.5em 1em;background:#F3F6FA;border-radius:8px;font-size:1.25em;font-weight:600;color:#173042;text-align:center;'>\n<strong>District:</strong> {district}<br>Predicted Uranium Concentration:<br><span style='font-size:2em;color:#4F8A10'>{pred:.2f} \u03bcg/L</span></div>"
             except Exception as e:
                 err_msg = f"Prediction failed: {str(e)}"
 
