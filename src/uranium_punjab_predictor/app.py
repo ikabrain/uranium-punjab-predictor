@@ -5,7 +5,7 @@ from uranium_punjab_predictor.utils.model import load_model, prepare_features
 
 MODEL_PATH = Path(__file__).parent / "models" / "model.joblib"
 
-# Major districts for dropdown
+  # Major districts for dropdown
 DISTRICTS = [
     "Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka",
     "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana",
@@ -19,6 +19,8 @@ def main():
     st.markdown(
         """
         Enter your Punjab location details to get a prediction of uranium concentration in groundwater.
+        
+        *(Based on the data from the 2023 Punjab Groundwater Survey)*
         """
     )
 
