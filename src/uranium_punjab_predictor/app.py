@@ -1,20 +1,43 @@
-import streamlit as st
-import pandas as pd
 from pathlib import Path
-from uranium_punjab_predictor.utils.model import load_model, prepare_features
+
+import pandas as pd
+import streamlit as st
+
+from uranium_punjab_predictor.utils.model import load_model
 
 MODEL_PATH = Path(__file__).parent / "models" / "model.joblib"
 
 # Major districts for dropdown
 DISTRICTS = [
-    "Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka",
-    "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana",
-    "Malerkotla", "Mansa", "Moga", "Mohali", "Muktsar", "Pathankot", "Patiala",
-    "Rupnagar", "Sangrur", "Tarn Taran"
+    "Amritsar",
+    "Barnala",
+    "Bathinda",
+    "Faridkot",
+    "Fatehgarh Sahib",
+    "Fazilka",
+    "Ferozepur",
+    "Gurdaspur",
+    "Hoshiarpur",
+    "Jalandhar",
+    "Kapurthala",
+    "Ludhiana",
+    "Malerkotla",
+    "Mansa",
+    "Moga",
+    "Mohali",
+    "Muktsar",
+    "Pathankot",
+    "Patiala",
+    "Rupnagar",
+    "Sangrur",
+    "Tarn Taran",
 ]
 
+
 def main():
-    st.set_page_config(page_title="Punjab Groundwater Uranium Predictor", layout="centered")
+    st.set_page_config(
+        page_title="Punjab Groundwater Uranium Predictor", layout="centered"
+    )
     st.title("Punjab Groundwater Uranium Predictor")
     st.markdown(
         """
@@ -27,7 +50,9 @@ def main():
     with st.form("prediction_form", clear_on_submit=False):
         district = st.selectbox("District", DISTRICTS)
         lat = st.number_input("Latitude", format="%.6f", min_value=27.0, max_value=34.0)
-        lon = st.number_input("Longitude", format="%.6f", min_value=73.0, max_value=77.0)
+        lon = st.number_input(
+            "Longitude", format="%.6f", min_value=73.0, max_value=77.0
+        )
         predict_btn = st.form_submit_button("Predict")
 
     result_html = None
@@ -54,17 +79,14 @@ def main():
 
         if not err_msg:
             try:
-                  # Only use latitude and longitude for features
-                features = pd.DataFrame({
-                    "latitude": [lat_f],
-                    "longitude": [lon_f]
-                })
+                # Only use latitude and longitude for features
+                features = pd.DataFrame({"latitude": [lat_f], "longitude": [lon_f]})
             except Exception as e:
                 err_msg = f"Error preparing input features: {str(e)}"
 
         if not err_msg:
             try:
-                pred        = model.predict(features)[0]
+                pred = model.predict(features)[0]
                 result_html = f"<div style='padding:1.5em 1em;background:#F3F6FA;border-radius:8px;font-size:1.25em;font-weight:600;color:#173042;text-align:center;'>\n<strong>District:</strong> {district}<br>Predicted Uranium Concentration:<br><span style='font-size:2em;color:#4F8A10'>{pred:.2f} \u03bcg/L</span></div>"
             except Exception as e:
                 err_msg = f"Prediction failed: {str(e)}"
@@ -73,6 +95,7 @@ def main():
         st.markdown(result_html, unsafe_allow_html=True)
     if err_msg:
         st.error(err_msg)
+
 
 if __name__ == "__main__":
     main()
